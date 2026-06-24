@@ -24,31 +24,63 @@ src/
 
 ## Diagrama del Patrón
 
-```
-┌─────────────────────┐
-│  <<interface>>      │
-│   Notificacion      │
-│  +enviar(mensaje)   │
-└─────────┬───────────┘
-          │
-          │ implements
-          │
-  ┌───────┴───────┬───────────────┐
-  │               │               │
-  ▼               ▼               ▼
- Email          SMS             Push
-  │               │               │
-  └───────────────┴───────────────┘
-          ▲
-          │ creates
-┌────────┴────────┬───────────────┐
-│  CreadorNotificacion (abstract)│
-│  +crearNotificacion()          │
-└────────┬────────┬───────────────┘
-         │        │        │
-         ▼        ▼        ▼
-    Creador   Creador  Creador
-      Email     SMS     Push
+```mermaid
+classDiagram
+    direction TB
+
+    class Notificacion {
+        <<interface>>
+        +enviar(mensaje: String)
+    }
+
+    class NotificacionEmail {
+        +enviar(mensaje: String)
+    }
+
+    class NotificacionSMS {
+        +enviar(mensaje: String)
+    }
+
+    class NotificacionPush {
+        +enviar(mensaje: String)
+    }
+
+    class CreadorNotificacion {
+        <<abstract>>
+        +crearNotificacion() Notificacion
+    }
+
+    class CreadorEmail {
+        +crearNotificacion() Notificacion
+    }
+
+    class CreadorSMS {
+        +crearNotificacion() Notificacion
+    }
+
+    class CreadorPush {
+        +crearNotificacion() Notificacion
+    }
+
+    class Cliente {
+        -creador: CreadorNotificacion
+        +enviarNotificacion(mensaje: String)
+    }
+
+    Notificacion <|.. NotificacionEmail
+    Notificacion <|.. NotificacionSMS
+    Notificacion <|.. NotificacionPush
+
+    CreadorNotificacion <|-- CreadorEmail
+    CreadorNotificacion <|-- CreadorSMS
+    CreadorNotificacion <|-- CreadorPush
+
+    CreadorEmail ..> NotificacionEmail : creates
+    CreadorSMS ..> NotificacionSMS : creates
+    CreadorPush ..> NotificacionPush : creates
+
+    Cliente --> CreadorNotificacion
+    Cliente --> Notificacion
 ```
 
 ## Compilación y Ejecución
